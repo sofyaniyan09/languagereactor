@@ -30,7 +30,8 @@ def transcribe_audio(audio_path: str):
         transcription = client.audio.transcriptions.create(
             file=(audio_path, file.read()),
             model="whisper-large-v3",
-            prompt="Berikut adalah rekaman campuran bahasa Indonesia dan Mandarin. 这是一个印尼语和中文的混合录音。请准确记录中文汉字 (Hanzi) 和印尼语。",
+            prompt="这是一段中文录音，请准确转录为简体汉字。",
+            language="zh",
             response_format="verbose_json",
         )
         return transcription
