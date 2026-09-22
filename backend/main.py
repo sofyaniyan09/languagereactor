@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from routers import process
+from routers import process, result, realtime
 import os
 from dotenv import load_dotenv
 
@@ -37,6 +37,6 @@ def read_root():
     return {"message": "Welcome to Language Reactor API"}
 
 app.include_router(process.router)
-
+app.include_router(realtime.router)
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

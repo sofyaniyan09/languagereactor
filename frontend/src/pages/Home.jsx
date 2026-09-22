@@ -185,6 +185,19 @@ export default function Home() {
           <LinkIcon size={20} style={{ margin: '0 auto', display: 'block', marginBottom: '6px', color: activeTab === 'link' ? 'var(--accent-color)' : 'inherit' }} />
           Link
         </button>
+        <button
+          onClick={() => navigate('/realtime')}
+          style={{ 
+            flex: '1 1 auto', padding: '12px 8px', borderRadius: '16px', border: 'none', 
+            background: 'transparent', 
+            color: 'var(--text-secondary)', 
+            fontWeight: 600, fontSize: '14px', transition: 'all 0.3s ease',
+            boxShadow: 'none'
+          }}
+        >
+          <Mic size={20} style={{ margin: '0 auto', display: 'block', marginBottom: '6px', color: 'inherit' }} />
+          Live
+        </button>
       </div>
 
       {/* Content Area */}
