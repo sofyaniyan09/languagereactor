@@ -28,17 +28,21 @@ def run_pipeline(task_id: str, file_path: str, tasks_db: dict):
     Main background job to process the uploaded file.
     Updates tasks_db at each step.
     """
+    print(f"\n========== STARTING PIPELINE FOR TASK {task_id} ==========\n")
     try:
         # Step 1: Audio Extraction (convert to 16kHz wav)
+        print(f"[TASK {task_id}] Step 1: Extracting audio...")
         update_status(task_id, "extracting_audio", tasks_db)
         wav_path = f"temp/{task_id}/audio.wav"
         extract_audio(file_path, wav_path)
         
         # Step 2: Transcription
+        print(f"[TASK {task_id}] Step 2: Transcribing audio with Groq...")
         update_status(task_id, "transcribing", tasks_db)
         transcription_result = transcribe_audio(wav_path)
         
         # Step 3: NLP & Translation
+        print(f"[TASK {task_id}] Step 3: NLP & Translation processing...")
         update_status(task_id, "processing_nlp", tasks_db)
         
         # Groq returns a verbose JSON with segments (start, end, text)
@@ -65,18 +69,23 @@ def run_pipeline(task_id: str, file_path: str, tasks_db: dict):
             
             processed_sentences.append(sentence_data)
             
+        print(f"[TASK {task_id}] Completed NLP processing for {len(processed_sentences)} sentences.")
+
         # Step 4: Finished
+        print(f"[TASK {task_id}] Step 4: Uploading to Supabase...")
         media_url = f"/media/{task_id}/audio.wav" # fallback local url
         
         # If supabase is configured, upload the audio file to the 'media' bucket
         if supabase:
             try:
                 storage_path = f"{task_id}/audio.wav"
+                print(f"[TASK {task_id}] Uploading to bucket 'media' at path '{storage_path}'")
                 with open(wav_path, "rb") as f:
                     supabase.storage.from_("media").upload(storage_path, f.read())
                 media_url = supabase.storage.from_("media").get_public_url(storage_path)
+                print(f"[TASK {task_id}] Supabase upload successful! URL: {media_url}")
             except Exception as e:
-                print(f"Failed to upload audio to Supabase Storage: {e}")
+                print(f"[TASK {task_id}] Failed to upload audio to Supabase Storage: {e}")
         
         result_payload = {
             "status": "completed",
@@ -85,10 +94,12 @@ def run_pipeline(task_id: str, file_path: str, tasks_db: dict):
         }
         
         update_status(task_id, "completed", tasks_db, result=result_payload)
+        print(f"\n========== PIPELINE COMPLETED FOR TASK {task_id} ==========\n")
         
     except Exception as e:
         update_status(task_id, "failed", tasks_db, error=str(e))
-        print(f"Pipeline failed for task {task_id}: {e}")
+        print(f"\n========== PIPELINE FAILED FOR TASK {task_id} ==========\n")
+        print(f"Error details: {e}\n")
     finally:
         # Cleanup original upload if needed
         # We can keep wav_path for playback, but in real app we upload to bucket

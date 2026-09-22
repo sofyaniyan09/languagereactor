@@ -1,13 +1,17 @@
-import shutil
+import subprocess
 
 def extract_audio(input_path: str, output_path: str) -> str:
     """
     Extracts audio from video or converts audio to 16kHz mono WAV for Whisper.
-    MOCKED: Just copies the input file to output_path because ffmpeg is missing.
     """
+    print(f"Extracting audio from {input_path} to {output_path} using ffmpeg...")
     try:
-        shutil.copyfile(input_path, output_path)
+        subprocess.run([
+            "ffmpeg", "-y", "-i", input_path, "-ac", "1", "-ar", "16000", "-vn", output_path
+        ], check=True, capture_output=True)
+        print(f"Extraction successful: {output_path}")
         return output_path
-    except Exception as e:
-        print(f"Extraction error: {str(e)}")
-        raise e
+    except subprocess.CalledProcessError as e:
+        error_msg = f"Extraction error: {e.stderr.decode()}"
+        print(error_msg)
+        raise Exception(error_msg)
