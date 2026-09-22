@@ -41,13 +41,12 @@ export default function Home() {
       };
 
       mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mp4' });
         const audioUrl = URL.createObjectURL(audioBlob);
         setRecordedAudio(audioUrl);
         
-        // Convert Blob to File object so it can be uploaded easily
-        const file = new File([audioBlob], "recording.webm", { type: 'audio/webm' });
-        setSelectedFile(file);
+        // Use Blob directly for iOS compatibility
+        setSelectedFile(audioBlob);
       };
 
       mediaRecorderRef.current.start();
@@ -99,12 +98,18 @@ export default function Home() {
 
   // --- Common Handler for Submitting to Backend ---
   const handleProcess = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      alert("Error: File belum terpilih atau kosong!");
+      return;
+    }
     setIsProcessing(true);
 
     try {
       const formData = new FormData();
-      formData.append('file', selectedFile);
+      // Add filename explicitly for Blob
+      formData.append('file', selectedFile, 'recording.mp4');
+
+      // alert(`Mengirim file sebesar ${selectedFile.size} bytes ke server...`); // debug
 
       // We hit the backend (Vercel proxy handles this)
       const response = await fetch('/api/process', {
@@ -113,7 +118,8 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorText = await response.text();
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
 
       const data = await response.json();
@@ -121,7 +127,7 @@ export default function Home() {
       navigate(`/result/${data.taskId}`);
     } catch (error) {
       console.error(error);
-      alert('Gagal memproses file. Pastikan backend FastAPI sedang berjalan.');
+      alert(`Gagal memproses: ${error.message}`);
       setIsProcessing(false);
     }
   };
