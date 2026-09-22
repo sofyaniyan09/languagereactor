@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from routers import process, result, realtime
+from routers import process, realtime
 import os
 from dotenv import load_dotenv
 
