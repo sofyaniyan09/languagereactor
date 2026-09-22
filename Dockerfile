@@ -8,11 +8,14 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy backend code
+COPY backend/ ./backend/
+
+# Move into backend directory for running the app
+WORKDIR /app/backend
 
 # Run the application
 CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
