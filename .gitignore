@@ -1,0 +1,19 @@
+# Node
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+env/
+.env
+
+# MacOS
+.DS_Store
+
+# Supabase Local
+supabase/.temp/
+
+# App temporary files
+backend/temp/
