@@ -133,52 +133,78 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <header style={{ marginBottom: '32px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '24px', marginBottom: '8px' }}>Belajar Mandarin</h1>
-        <p>Praktik Lewat Video & Suara</p>
+    <div style={{ 
+      padding: 'calc(max(24px, env(safe-area-inset-top) + 12px)) 24px calc(max(24px, env(safe-area-inset-bottom) + 12px)) 24px', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100%' 
+    }}>
+      <header style={{ marginBottom: '40px', textAlign: 'center', marginTop: '16px' }}>
+        <h1 className="text-gradient" style={{ fontSize: '32px', marginBottom: '8px' }}>Belajar Mandarin</h1>
+        <p style={{ fontSize: '16px', opacity: 0.8 }}>Praktik Lewat Video & Suara</p>
       </header>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '32px', background: 'var(--surface-color)', padding: '4px', borderRadius: '16px', flexWrap: 'wrap' }}>
+      <div className="glass-panel" style={{ display: 'flex', gap: '4px', marginBottom: '32px', padding: '6px', borderRadius: '20px', flexWrap: 'wrap' }}>
         <button
           onClick={() => { setActiveTab('upload'); setSelectedFile(null); }}
-          style={{ flex: '1 1 auto', padding: '10px 8px', borderRadius: '12px', border: 'none', background: activeTab === 'upload' ? 'var(--surface-color-light)' : 'transparent', color: activeTab === 'upload' ? 'white' : 'var(--text-secondary)', fontWeight: 600, fontSize: '14px' }}
+          style={{ 
+            flex: '1 1 auto', padding: '12px 8px', borderRadius: '16px', border: 'none', 
+            background: activeTab === 'upload' ? 'rgba(255, 255, 255, 0.1)' : 'transparent', 
+            color: activeTab === 'upload' ? 'white' : 'var(--text-secondary)', 
+            fontWeight: 600, fontSize: '14px', transition: 'all 0.3s ease',
+            boxShadow: activeTab === 'upload' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
+          }}
         >
-          <Upload size={18} style={{ margin: '0 auto', display: 'block', marginBottom: '4px' }} />
+          <Upload size={20} style={{ margin: '0 auto', display: 'block', marginBottom: '6px', color: activeTab === 'upload' ? 'var(--accent-color)' : 'inherit' }} />
           Upload
         </button>
         <button
           onClick={() => { setActiveTab('record'); setSelectedFile(null); }}
-          style={{ flex: '1 1 auto', padding: '10px 8px', borderRadius: '12px', border: 'none', background: activeTab === 'record' ? 'var(--surface-color-light)' : 'transparent', color: activeTab === 'record' ? 'white' : 'var(--text-secondary)', fontWeight: 600, fontSize: '14px' }}
+          style={{ 
+            flex: '1 1 auto', padding: '12px 8px', borderRadius: '16px', border: 'none', 
+            background: activeTab === 'record' ? 'rgba(255, 255, 255, 0.1)' : 'transparent', 
+            color: activeTab === 'record' ? 'white' : 'var(--text-secondary)', 
+            fontWeight: 600, fontSize: '14px', transition: 'all 0.3s ease',
+            boxShadow: activeTab === 'record' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
+          }}
         >
-          <Mic size={18} style={{ margin: '0 auto', display: 'block', marginBottom: '4px' }} />
+          <Mic size={20} style={{ margin: '0 auto', display: 'block', marginBottom: '6px', color: activeTab === 'record' ? 'var(--accent-color)' : 'inherit' }} />
           Rekam
         </button>
         <button
           onClick={() => { setActiveTab('link'); setSelectedFile(null); }}
-          style={{ flex: '1 1 auto', padding: '10px 8px', borderRadius: '12px', border: 'none', background: activeTab === 'link' ? 'var(--surface-color-light)' : 'transparent', color: activeTab === 'link' ? 'white' : 'var(--text-secondary)', fontWeight: 600, fontSize: '14px' }}
+          style={{ 
+            flex: '1 1 auto', padding: '12px 8px', borderRadius: '16px', border: 'none', 
+            background: activeTab === 'link' ? 'rgba(255, 255, 255, 0.1)' : 'transparent', 
+            color: activeTab === 'link' ? 'white' : 'var(--text-secondary)', 
+            fontWeight: 600, fontSize: '14px', transition: 'all 0.3s ease',
+            boxShadow: activeTab === 'link' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
+          }}
         >
-          <LinkIcon size={18} style={{ margin: '0 auto', display: 'block', marginBottom: '4px' }} />
+          <LinkIcon size={20} style={{ margin: '0 auto', display: 'block', marginBottom: '6px', color: activeTab === 'link' ? 'var(--accent-color)' : 'inherit' }} />
           Link
         </button>
       </div>
 
       {/* Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingBottom: '32px' }}>
 
         {activeTab === 'upload' && (
-          <div style={{ width: '100%', background: 'var(--surface-color)', padding: '32px', borderRadius: '16px', textAlign: 'center', border: '2px dashed var(--border-color)' }}>
-            <Upload size={48} color="var(--text-secondary)" style={{ margin: '0 auto', display: 'block', marginBottom: '16px' }} />
-            <p style={{ marginBottom: '24px' }}>Pilih video atau audio (MP4, WAV, MP3)</p>
+          <div className="glass-panel" style={{ width: '100%', padding: '40px 24px', borderRadius: '24px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'var(--accent-gradient)' }}></div>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+              <Upload size={36} color="var(--accent-color)" />
+            </div>
+            <p style={{ marginBottom: '24px', fontSize: '16px' }}>Pilih video atau audio<br/><span style={{opacity: 0.6, fontSize: '14px'}}>(MP4, WAV, MP3)</span></p>
             <input type="file" id="file-upload" accept="video/mp4,audio/*" onChange={handleFileChange} style={{ display: 'none' }} />
-            <label htmlFor="file-upload" className="btn" style={{ marginBottom: '16px', display: 'inline-block' }}>
+            <label htmlFor="file-upload" className="btn" style={{ marginBottom: '16px', display: 'inline-flex', minWidth: '160px' }}>
               Browse File
             </label>
             {selectedFile && (
-              <div style={{ marginTop: '16px' }}>
-                <p style={{ fontWeight: 600, color: 'var(--accent-color)', wordBreak: 'break-all' }}>{selectedFile.name}</p>
-                <p style={{ fontSize: '14px', marginTop: '4px' }}>{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+              <div style={{ marginTop: '24px', padding: '16px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
+                <p style={{ fontWeight: 600, color: 'white', wordBreak: 'break-all' }}>{selectedFile.name}</p>
+                <p style={{ fontSize: '14px', marginTop: '4px', color: 'var(--accent-color)' }}>{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
                 <button className="btn btn-primary" style={{ width: '100%', marginTop: '24px' }} onClick={handleProcess} disabled={isProcessing}>
                   {isProcessing ? 'Memproses...' : 'Analisa File'}
                 </button>
@@ -188,64 +214,79 @@ export default function Home() {
         )}
 
         {activeTab === 'record' && (
-          <div style={{ width: '100%', background: 'var(--surface-color)', padding: '32px 16px', borderRadius: '16px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="glass-panel" style={{ width: '100%', padding: '40px 24px', borderRadius: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: 'var(--danger-gradient)' }}></div>
             
             {!recordedAudio ? (
               <>
-                <p style={{ marginBottom: '24px', color: 'var(--text-secondary)' }}>Tekan untuk merekam suara Anda langsung</p>
+                <p style={{ marginBottom: '32px', color: 'var(--text-secondary)', fontSize: '16px' }}>Tekan untuk mulai merekam</p>
                 
-                <button 
-                  onClick={isRecording ? stopRecording : startRecording}
-                  style={{
-                    width: '80px', height: '80px', borderRadius: '50%',
-                    background: isRecording ? 'transparent' : 'var(--accent-color)',
-                    border: isRecording ? '2px solid var(--error-color)' : 'none',
-                    color: isRecording ? 'var(--error-color)' : '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', marginBottom: '16px',
-                    transition: 'all 0.2s',
-                    animation: isRecording ? 'pulse 1.5s infinite' : 'none'
-                  }}
-                >
-                  {isRecording ? <Square fill="currentColor" size={32} /> : <Mic size={32} />}
-                </button>
+                <div style={{ position: 'relative', marginBottom: '32px' }}>
+                  {isRecording && (
+                    <div style={{ position: 'absolute', top: '-10px', left: '-10px', right: '-10px', bottom: '-10px', background: 'var(--danger-gradient)', borderRadius: '50%', opacity: 0.2, animation: 'pulse-glow 1.5s infinite' }}></div>
+                  )}
+                  <button 
+                    onClick={isRecording ? stopRecording : startRecording}
+                    style={{
+                      position: 'relative', zIndex: 2,
+                      width: '96px', height: '96px', borderRadius: '50%',
+                      background: isRecording ? 'transparent' : 'var(--danger-gradient)',
+                      border: isRecording ? '3px solid var(--danger-color)' : 'none',
+                      color: isRecording ? 'var(--danger-color)' : '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s',
+                      boxShadow: isRecording ? 'none' : '0 8px 32px rgba(239, 68, 68, 0.4)'
+                    }}
+                  >
+                    {isRecording ? <Square fill="currentColor" size={32} /> : <Mic size={40} />}
+                  </button>
+                </div>
 
-                <div style={{ fontSize: '24px', fontFamily: 'monospace', fontWeight: 600, color: isRecording ? 'var(--error-color)' : 'var(--text-primary)' }}>
+                <div style={{ fontSize: '32px', fontFamily: 'monospace', fontWeight: 700, color: isRecording ? 'var(--danger-color)' : 'var(--text-primary)', letterSpacing: '2px' }}>
                   {formatTime(recordingTime)}
                 </div>
               </>
             ) : (
-              <>
-                <p style={{ marginBottom: '16px', color: 'var(--text-secondary)' }}>Rekaman Selesai</p>
+              <div style={{ width: '100%', animation: 'fadeIn 0.5s' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Mic size={28} color="var(--success-color)" />
+                </div>
+                <p style={{ marginBottom: '24px', color: 'white', fontWeight: 600 }}>Rekaman Selesai</p>
                 
-                <audio controls src={recordedAudio} style={{ width: '100%', marginBottom: '24px', borderRadius: '8px' }} />
+                <audio controls src={recordedAudio} style={{ width: '100%', marginBottom: '32px', borderRadius: '12px', height: '48px' }} />
                 
-                <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                  <button className="btn" style={{ flex: 1, background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--error-color)' }} onClick={clearRecording}>
-                    <Trash2 size={18} style={{ marginRight: '8px' }} /> Hapus
+                <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+                  <button className="btn" style={{ flex: 1, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: 'var(--danger-color)' }} onClick={clearRecording}>
+                    <Trash2 size={20} />
                   </button>
-                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={handleProcess} disabled={isProcessing}>
+                  <button className="btn btn-primary" style={{ flex: 3 }} onClick={handleProcess} disabled={isProcessing}>
                     {isProcessing ? 'Memproses...' : 'Analisa Suara'}
                   </button>
                 </div>
-              </>
+              </div>
             )}
 
-            {/* Pulsing animation style definition */}
             <style>{`
-              @keyframes pulse {
-                0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-                70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-                100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+              @keyframes pulse-glow {
+                0% { transform: scale(1); opacity: 0.5; }
+                50% { transform: scale(1.3); opacity: 0.1; }
+                100% { transform: scale(1); opacity: 0.5; }
+              }
+              @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
               }
             `}</style>
           </div>
         )}
 
         {activeTab === 'link' && (
-          <div style={{ width: '100%', textAlign: 'center', color: 'var(--text-secondary)' }}>
-            <LinkIcon size={48} style={{ margin: '0 auto', display: 'block', marginBottom: '16px', opacity: 0.5 }} />
-            <p>Fitur paste link (YouTube/TikTok) akan hadir di Fase 3.</p>
+          <div className="glass-panel" style={{ width: '100%', padding: '40px 24px', borderRadius: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+              <LinkIcon size={36} color="var(--text-secondary)" />
+            </div>
+            <p style={{fontSize: '16px', lineHeight: 1.6}}>Fitur paste link (YouTube/TikTok) akan hadir di Fase 3.</p>
           </div>
         )}
 

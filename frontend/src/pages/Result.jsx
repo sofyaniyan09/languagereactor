@@ -92,13 +92,13 @@ export default function Result() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: 'calc(max(16px, env(safe-area-inset-top))) 0 calc(max(16px, env(safe-area-inset-bottom))) 0' }}>
       {/* Header */}
-      <header style={{ padding: '16px 24px', background: 'var(--surface-color)', position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', gap: '16px', borderBottom: '1px solid var(--border-color)' }}>
-        <button onClick={() => navigate('/')} className="btn-icon" style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)' }}>
-          <ArrowLeft size={24} />
+      <header className="glass-panel" style={{ padding: '16px 24px', position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', gap: '16px', borderLeft: 'none', borderRight: 'none', borderTop: 'none', borderRadius: 0 }}>
+        <button onClick={() => navigate('/')} className="btn-icon" style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'var(--text-primary)' }}>
+          <ArrowLeft size={20} />
         </button>
-        <h2 style={{ fontSize: '18px', margin: 0 }}>Hasil Analisa</h2>
+        <h2 className="text-gradient" style={{ fontSize: '20px', margin: 0 }}>Hasil Analisa</h2>
       </header>
 
       {/* Hidden Audio Element */}
@@ -107,63 +107,71 @@ export default function Result() {
       )}
 
       {/* Content */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px', paddingBottom: `calc(24px + var(--safe-area-bottom))` }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {data?.sentences.map((sentence) => (
-            <div key={sentence.id} style={{ 
-              background: 'var(--surface-color)', 
-              borderRadius: '16px', 
-              padding: '20px',
-              border: activeSentenceId === sentence.id ? '1px solid var(--accent-color)' : '1px solid transparent',
-              transition: 'border 0.2s ease'
+            <div key={sentence.id} className="glass-panel" style={{ 
+              borderRadius: '24px', 
+              padding: '24px',
+              border: activeSentenceId === sentence.id ? '1px solid var(--accent-color)' : '1px solid var(--border-color)',
+              transition: 'all 0.3s ease',
+              boxShadow: activeSentenceId === sentence.id ? '0 8px 32px rgba(139, 92, 246, 0.2)' : '0 8px 32px rgba(0, 0, 0, 0.2)',
+              transform: activeSentenceId === sentence.id ? 'scale(1.02)' : 'scale(1)'
             }}>
               
               {/* Card Header: Number, Mandarin, Play Button */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                <div style={{ fontWeight: 'bold', fontSize: '18px', flex: 1, paddingRight: '16px' }}>
-                  {sentence.id}. {sentence.hanzi}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                <div style={{ fontWeight: 700, fontSize: '20px', flex: 1, paddingRight: '16px', color: 'white' }}>
+                  <span style={{ color: 'var(--accent-color)', marginRight: '8px' }}>{sentence.id}.</span>{sentence.hanzi}
                 </div>
                 <button 
                   onClick={() => playSentence(sentence)}
                   style={{
-                    background: activeSentenceId === sentence.id ? 'var(--accent-hover)' : 'var(--surface-color-light)',
+                    background: activeSentenceId === sentence.id ? 'var(--accent-gradient)' : 'rgba(255,255,255,0.1)',
                     border: 'none',
                     borderRadius: '50%',
-                    width: '40px',
-                    height: '40px',
+                    width: '44px',
+                    height: '44px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
                     color: 'white',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    transition: 'all 0.3s ease',
+                    boxShadow: activeSentenceId === sentence.id ? '0 4px 15px rgba(139, 92, 246, 0.4)' : 'none'
                   }}
                 >
-                  <Play size={20} fill={activeSentenceId === sentence.id ? "white" : "none"} />
+                  <Play size={20} fill={activeSentenceId === sentence.id ? "white" : "none"} style={{ marginLeft: activeSentenceId === sentence.id ? '0' : '2px' }} />
                 </button>
               </div>
 
-              {/* Hanzi & Pinyin Full */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '16px', marginBottom: '4px' }}><strong>Hanzi:</strong> {sentence.hanzi}</div>
-                <div style={{ fontSize: '16px', color: 'var(--text-secondary)' }}><strong>Pinyin:</strong> {sentence.pinyin}</div>
+              {/* Pinyin */}
+              <div style={{ marginBottom: '20px', background: 'rgba(0,0,0,0.2)', padding: '12px 16px', borderRadius: '12px' }}>
+                <div style={{ fontSize: '15px', color: 'var(--accent-color)', fontWeight: 600, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>Pinyin</div>
+                <div style={{ fontSize: '18px', color: 'white' }}>{sentence.pinyin}</div>
               </div>
 
               {/* Per Kata Breakdown */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>Per kata:</div>
-                <ul style={{ listStyleType: 'disc', paddingLeft: '24px', margin: 0, color: 'var(--text-secondary)' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Per Kata</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {sentence.words.map((word, idx) => (
-                    <li key={idx} style={{ marginBottom: '4px' }}>
-                      <span style={{ color: 'var(--text-primary)' }}>{word.hanzi}</span> = {word.pinyin} = {word.meaning}
-                    </li>
+                    <div key={idx} style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '12px', alignItems: 'center' }}>
+                      <div style={{ flex: '0 0 60px', fontSize: '20px', color: 'white', fontWeight: 500 }}>{word.hanzi}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ color: 'var(--accent-color)', fontSize: '14px', marginBottom: '2px' }}>{word.pinyin}</div>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{word.meaning}</div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
 
               {/* Translation */}
-              <div style={{ paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-                <strong>Arti:</strong> {sentence.translation}
+              <div style={{ paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Terjemahan</div>
+                <div style={{ fontSize: '16px', color: 'white', lineHeight: 1.6 }}>{sentence.translation}</div>
               </div>
 
             </div>
