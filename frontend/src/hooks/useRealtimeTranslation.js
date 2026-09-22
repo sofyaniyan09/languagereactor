@@ -1,7 +1,9 @@
 import { useState, useRef, useCallback } from 'react';
 
-// Default to Render URL in production, or local in dev
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/realtime';
+// Default to Render URL in production
+const WS_URL = import.meta.env.PROD 
+  ? 'wss://languagereactor.onrender.com/ws/realtime'
+  : 'ws://localhost:8000/ws/realtime';
 
 export function useRealtimeTranslation() {
   const [isListening, setIsListening] = useState(false);
