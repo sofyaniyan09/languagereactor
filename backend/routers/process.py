@@ -7,7 +7,7 @@ from services.supabase_client import supabase
 
 router = APIRouter()
 
-# In-memory mock database for tasks
+# In-memory database for tasks (always used as primary source)
 tasks_db = {}
 
 @router.post("/api/process")
@@ -25,7 +25,7 @@ async def process_media(background_tasks: BackgroundTasks, file: UploadFile = Fi
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Register task
+    # Register task in memory ALWAYS
     task_record = {
         "id": task_id,
         "status": "queued",
@@ -33,20 +33,19 @@ async def process_media(background_tasks: BackgroundTasks, file: UploadFile = Fi
         "result": None,
         "error": None
     }
-    
+    tasks_db[task_id] = task_record
+    print(f"[TASK {task_id}] Registered in memory. tasks_db size: {len(tasks_db)}")
+
+    # Also try to save to Supabase (optional, non-blocking)
     if supabase:
         try:
-            # We don't insert 'error' or 'progress' as columns initially unless they exist in schema.
-            # Assuming 'tasks' table has: id, status, result (jsonb), error (text)
             supabase.table("tasks").insert({
                 "id": task_id,
                 "status": "queued"
             }).execute()
+            print(f"[TASK {task_id}] Also saved to Supabase.")
         except Exception as e:
-            print(f"Failed to create task in Supabase: {e}")
-            tasks_db[task_id] = task_record
-    else:
-        tasks_db[task_id] = task_record
+            print(f"[TASK {task_id}] Supabase insert failed (non-fatal): {e}")
 
     background_tasks.add_task(run_pipeline, task_id, file_path, tasks_db)
     
@@ -54,42 +53,44 @@ async def process_media(background_tasks: BackgroundTasks, file: UploadFile = Fi
 
 @router.get("/api/task/{task_id}/status")
 async def get_task_status(task_id: str):
+    # Always check in-memory first (primary)
+    task = tasks_db.get(task_id)
+    if task:
+        return task
+
+    # Fallback: try Supabase
     if supabase:
         try:
             response = supabase.table("tasks").select("*").eq("id", task_id).execute()
-            if not response.data:
-                raise HTTPException(status_code=404, detail="Task not found in Supabase")
-            task = response.data[0]
-            # Map Supabase row back to frontend expected format
-            return {
-                "status": task.get("status"),
-                "progress": 0,
-                "result": task.get("result"),
-                "error": task.get("error")
-            }
+            if response.data:
+                t = response.data[0]
+                return {
+                    "status": t.get("status"),
+                    "progress": 0,
+                    "result": t.get("result"),
+                    "error": t.get("error")
+                }
         except Exception as e:
-            print(f"Supabase error: {e}")
-            task = tasks_db.get(task_id)
-            if not task:
-                raise HTTPException(status_code=404, detail="Task not found")
-            return task
-    else:
-        task = tasks_db.get(task_id)
-        if not task:
-            raise HTTPException(status_code=404, detail="Task not found")
-        return task
+            print(f"Supabase status error: {e}")
+
+    raise HTTPException(status_code=404, detail="Task not found")
 
 @router.get("/api/result/{task_id}")
 async def get_task_result(task_id: str):
-    if supabase:
-        response = supabase.table("tasks").select("*").eq("id", task_id).execute()
-        if not response.data:
-            raise HTTPException(status_code=404, detail="Task not found in Supabase")
-        task = response.data[0]
-    else:
-        task = tasks_db.get(task_id)
-        if not task:
-            raise HTTPException(status_code=404, detail="Task not found")
+    # Always check in-memory first (primary)
+    task = tasks_db.get(task_id)
+
+    # Fallback: try Supabase
+    if not task and supabase:
+        try:
+            response = supabase.table("tasks").select("*").eq("id", task_id).execute()
+            if response.data:
+                task = response.data[0]
+        except Exception as e:
+            print(f"Supabase result error: {e}")
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
             
     if task.get("status") != "completed":
         raise HTTPException(status_code=400, detail="Task not completed yet")
