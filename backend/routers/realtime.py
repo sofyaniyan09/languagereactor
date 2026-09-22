@@ -55,6 +55,24 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                 print(f"[RealTime] Current transcript: {current_text}")
                 
+                # Filter out known Whisper hallucinations (like the prompt itself or silence tokens)
+                hallucinations = [
+                    "请准确转录为简体汉字",
+                    "这是一段中文录音，请准确转录为简体汉字",
+                    "这是一段中文录音请准确转录为简体汉字",
+                    "请准确转录为简体汉字。",
+                    "这是一段中文录音，请准确转录为简体汉字。",
+                    "Amara.org",
+                    "Thank you.",
+                    "Terima kasih."
+                ]
+                
+                if not current_text or any(h in current_text for h in hallucinations) or any(current_text in h for h in hallucinations):
+                    print("[RealTime] Hallucination or silence detected. Skipping.")
+                    # If it's just silence/hallucination, we can clear the buffer to prevent a buildup of silence
+                    accumulated_audio = AudioSegment.empty()
+                    continue
+                
                 # Send intermediate transcript to client
                 await websocket.send_json({
                     "type": "transcript_update",
